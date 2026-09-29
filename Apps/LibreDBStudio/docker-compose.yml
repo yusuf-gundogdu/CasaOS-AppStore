@@ -81,7 +81,7 @@ x-casaos:
   author: libredb
   category: Developer
   description:
-    en_US: LibreDB Studio is an open-source (MIT), self-hosted SQL IDE. It provides a modern web-based interface to connect to 18 database engines (PostgreSQL, MySQL, MongoDB, Redis, ClickHouse, Prometheus, Apache Kafka and more), browse schemas, and write and run queries from any browser on your LAN. Five of the eighteen are read-only, because their own APIs are. Data is stored locally in a SQLite database, so everything stays under your control.
+    en_US: LibreDB Studio is an open-source (MIT), self-hosted SQL IDE. It provides a modern web-based interface to connect to eighteen database engines (PostgreSQL, MySQL, MongoDB, Redis, ClickHouse, Prometheus, Apache Kafka and more), browse schemas, and write and run queries from any browser on your LAN. Five of the eighteen are read-only, because their own APIs are. Data is stored locally in a SQLite database, so everything stays under your control.
     zh_CN: LibreDB Studio 是一款开源（MIT）的自托管 SQL IDE。它提供现代化的基于 Web 的界面，支持连接 18 种数据库引擎、浏览架构，并可通过局域网中的任意浏览器编写和运行查询。其中五种为只读，因为它们自身的 API 即为只读。数据本地存储于 SQLite 数据库中，一切尽在您的掌控之中。
   developer: libredb
   icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/LibreDBStudio/icon.svg
