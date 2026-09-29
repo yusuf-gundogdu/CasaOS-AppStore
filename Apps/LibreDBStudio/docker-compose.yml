@@ -1,7 +1,7 @@
 name: libredb-studio
 services:
   libredb-studio:
-    image: libredb/libredb-studio:0.16.2
+    image: libredb/libredb-studio:0.17.0
     container_name: libredb-studio
     restart: unless-stopped
     ports:
@@ -81,8 +81,8 @@ x-casaos:
   author: libredb
   category: Developer
   description:
-    en_US: LibreDB Studio is an open-source (MIT), self-hosted SQL IDE. It provides a modern web-based interface to connect to 16 database engines (PostgreSQL, MySQL, MongoDB, Redis, ClickHouse and more), browse schemas, write and run SQL queries, and manage your data from any browser on your LAN. Data is stored locally in a SQLite database, so everything stays under your control.
-    zh_CN: LibreDB Studio 是一款开源（MIT）的自托管 SQL IDE。它提供现代化的基于 Web 的界面，可连接数据库、浏览架构、编写并运行 SQL 查询，并可通过局域网中的任意浏览器管理数据。数据本地存储于 SQLite 数据库中，一切尽在您的掌控之中。
+    en_US: LibreDB Studio is an open-source (MIT), self-hosted SQL IDE. It provides a modern web-based interface to connect to 18 database engines (PostgreSQL, MySQL, MongoDB, Redis, ClickHouse, Prometheus, Apache Kafka and more), browse schemas, and write and run queries from any browser on your LAN. Five of the eighteen are read-only, because their own APIs are. Data is stored locally in a SQLite database, so everything stays under your control.
+    zh_CN: LibreDB Studio 是一款开源（MIT）的自托管 SQL IDE。它提供现代化的基于 Web 的界面，支持连接 18 种数据库引擎、浏览架构，并可通过局域网中的任意浏览器编写和运行查询。其中五种为只读，因为它们自身的 API 即为只读。数据本地存储于 SQLite 数据库中，一切尽在您的掌控之中。
   developer: libredb
   icon: https://cdn.jsdelivr.net/gh/IceWhaleTech/CasaOS-AppStore@main/Apps/LibreDBStudio/icon.svg
   screenshot_link:
@@ -99,23 +99,19 @@ x-casaos:
   index: /
   scheme: http
   port_map: "3016"
-  version: "0.16.2"
-  update_at: "2026-09-21"
+  version: "0.17.0"
+  update_at: "2026-09-26"
   release_notes:
     en_US: |-
-      - Updates LibreDB Studio to 0.16.2. This release closes a security defect, GHSA-3wh2-8x78-jfw4, scored 8.8.
-      - A connection id sent in a request could select another session's database provider, already authenticated as that user. A `user` account could reach a connection restricted to `admin`. The cache key is now derived from the server the connection resolves to and a digest of its credentials, so a forged id buys nothing. Upgrade if more than one account reaches your instance.
-      - Schema diff reads a column default as a value rather than as SQL. A default of `0`, `''` or `false` used to read as absent and was dropped from the generated DDL.
-      - An Elasticsearch connection can authenticate with an API key id and secret, not only a username and password.
-      - Query results page from the stats strip. A `LIMIT` you typed is now a hard bound, while a capped preview stays readable beyond its first page.
-      - The example compose stacks publish their PostgreSQL and Vault containers on the loopback interface only, so a demo on a host with a public address no longer exposes them.
+      - Updates LibreDB Studio to 0.17.0. Two engines join, taking the count to 18: Prometheus, read over its HTTP API in PromQL, and Apache Kafka, whose topics, consumer groups and brokers are read over the Kafka protocol. Both are read-only, because this release calls no write, admin or lifecycle endpoint on either.
+      - Studio serves the Model Context Protocol at `/api/mcp`, so an AI client you already use can list connections, inspect a schema and run one read-only `SELECT` while the database credentials stay on the server. It is off until an operator turns it on, each user mints a bearer token that is shown once, and only connections explicitly marked for it are visible.
+      - The image is rebuilt on Node 26.9.0, which clears three critical `perl-base` advisories that the 0.16.x images carried.
+      - The previous release, 0.16.2, closed `GHSA-3wh2-8x78-jfw4`, scored 8.8. If this instance is still on 0.16.1 or older and more than one account reaches it, upgrade rather than wait.
     zh_CN: |-
-      - 将 LibreDB Studio 更新至 0.16.2。本次发布修复了一个安全缺陷 GHSA-3wh2-8x78-jfw4，评分 8.8。
-      - 请求中传入的连接 id 可以选中其他会话的数据库提供者，且该提供者已以对方身份完成认证。`user` 账户因此可以访问仅限 `admin` 的连接。缓存键现在由连接指向的服务器和凭据摘要推导得出，伪造 id 不再有任何作用。若有多个账户访问你的实例，请升级。
-      - 结构差异比对现在把列默认值当作值而非 SQL 读取。此前 `0`、`''` 或 `false` 这类默认值会被视为缺失，并从生成的 DDL 中丢失。
-      - Elasticsearch 连接可以使用 API key 的 id 与 secret 认证，不再只支持用户名和密码。
-      - 查询结果可从统计条分页。你自己写的 `LIMIT` 现在是硬边界，而受限预览可以翻到第一页之后。
-      - 示例 compose 栈的 PostgreSQL 与 Vault 容器只监听回环地址，在有公网地址的主机上做演示不会再把它们暴露出去。
+      - 将 LibreDB Studio 更新至 0.17.0。新增两种引擎，总数达到 18 种：Prometheus 通过其 HTTP API 以 PromQL 读取，Apache Kafka 通过 Kafka 协议读取主题、消费者组和 broker。两者均为只读，本次发布不会对它们调用任何写入、管理或生命周期接口。
+      - Studio 在 `/api/mcp` 上提供 Model Context Protocol 服务，你现有的 AI 客户端可以列出连接、查看结构并执行一条只读 `SELECT`，数据库凭据始终留在服务端。该功能默认关闭，需管理员开启；每位用户生成的 bearer token 只显示一次，且只有被显式标记的连接才可见。
+      - 镜像基于 Node 26.9.0 重新构建，修复了 0.16.x 镜像中存在的三个 `perl-base` 严重漏洞。
+      - 上一版本 0.16.2 修复了评分 8.8 的 `GHSA-3wh2-8x78-jfw4`。若本实例仍在 0.16.1 或更早版本且有多个账户可访问，请尽快升级。
   website: https://libredb.org
   repo: https://github.com/libredb/libredb-studio
   support: https://github.com/libredb/libredb-studio/issues
